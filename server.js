@@ -227,7 +227,7 @@ app.get('/api/speech-ids', async (req, res) => {
         console.log('Raw response:', JSON.stringify(allSpeeches, null, 2));
         
         // Validate response structure
-        if (!allSpeeches || !allSpeeches.speeches) {
+        if (!allSpeeches || !allSpeeches.data || !allSpeeches.data.all_speeches) {
             return res.status(500).json({ 
                 error: 'Invalid response from Otter.ai',
                 message: 'Expected speeches array not found in response'
@@ -235,7 +235,7 @@ app.get('/api/speech-ids', async (req, res) => {
         }
         
         // Extract speech IDs and basic info
-        const speechIds = allSpeeches.speeches.map(speech => ({
+        const speechIds = allSpeeches.data.all_speeches.map(speech => ({
             id: speech.id,
             title: speech.title || 'Untitled',
             created_at: speech.created_at || null,
@@ -244,7 +244,7 @@ app.get('/api/speech-ids', async (req, res) => {
         }));
         
         const response = {
-            total_count: allSpeeches.total_count || speechIds.length,
+            total_count: allSpeeches.data.summary?.total_count || speechIds.length,
             speech_ids: speechIds
         };
         
